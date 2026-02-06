@@ -709,28 +709,28 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-// app.use(cors({
-//   origin: "*",
-//   methods: ["GET", "POST"],
-// }));
-
-const allowedOrigins = [
-  "https://llm-ai-tools.netlify.app",
-  "http://localhost:5500",
-  "http://localhost:3000"
-];
-
 app.use(cors({
-  origin: function(origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
+  origin: "*",
   methods: ["GET", "POST"],
-  credentials: true
 }));
+
+// const allowedOrigins = [
+//   "https://llm-ai-tools.netlify.app",
+//   "http://localhost:5500",
+//   "http://localhost:3000"
+// ];
+
+// app.use(cors({
+//   origin: function(origin, callback) {
+//     if (!origin || allowedOrigins.includes(origin)) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error("Not allowed by CORS"));
+//     }
+//   },
+//   methods: ["GET", "POST"],
+//   credentials: true
+// }));
 
 
 app.get("/", (req, res) => {
@@ -742,44 +742,57 @@ function literalMention(text, brand) {
 }
 
 function extractJSON(text) {
-  if (!text) return null;
-
-  // Extract first valid JSON object from text
-  const match = text.match(/\{[\s\S]*\}/);
-
-  if (!match) return null;
-
-  return match[0];
+  try {
+    const firstBrace = text.indexOf("{");
+    const lastBrace = text.lastIndexOf("}");
+    if (firstBrace === -1 || lastBrace === -1) return null;
+    return text.slice(firstBrace, lastBrace + 1);
+  } catch {
+    return null;
+  }
 }
 
 
 async function fetchWebsiteData(domain) {
-  const url = domain.startsWith("http") ? domain : `https://${domain}`;
-  const { data: html } = await axios.get(url, { timeout: 30000 });
+  try {
+    const url = domain.startsWith("http") ? domain : `https://${domain}`;
 
-  const $ = cheerio.load(html);
+    const { data: html } = await axios.get(url, {
+      timeout: 15000,
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36"
+      }
+    });
 
-  return {
-    title: $("title").text(),
-    metaDescription: $('meta[name="description"]').attr("content") || "",
-    headings: $("h1, h2")
-      .map((_, el) => $(el).text())
-      .get()
-      .slice(0, 10),
-    bodyText: $("body").text().replace(/\s+/g, " ").slice(0, 4000),
-    scripts: $("script[src]")
-      .map((_, el) => $(el).attr("src"))
-      .get()
-      .slice(0, 20),
-    images: $("img[src], img[data-src]")
-      .map((_, el) => $(el).attr("src") || $(el).attr("data-src"))
-      .get()
-      .slice(0, 20),
-    structuredData: $('script[type="application/ld+json"]')
-      .map((_, el) => $(el).html())
-      .get()
-  };
+    const $ = cheerio.load(html);
+
+    return {
+      title: $("title").text(),
+      metaDescription: $('meta[name="description"]').attr("content") || "",
+      headings: $("h1, h2").map((_, el) => $(el).text()).get().slice(0, 10),
+      bodyText: $("body").text().replace(/\s+/g, " ").slice(0, 4000),
+      scripts: $("script[src]").map((_, el) => $(el).attr("src")).get().slice(0, 20),
+      images: $("img[src], img[data-src]").map((_, el) => $(el).attr("src") || $(el).attr("data-src")).get().slice(0, 20),
+      structuredData: $('script[type="application/ld+json"]').map((_, el) => $(el).html()).get()
+    };
+
+  } catch (err) {
+    console.log("⚠️ Scraping blocked:", err.code || err.message);
+
+    // DO NOT CRASH
+    return {
+      title: "",
+      metaDescription: "",
+      headings: [],
+      bodyText: "",
+      scripts: [],
+      images: [],
+      structuredData: []
+    };
+  }
 }
+
 
 // Check visibility in ChatGPT
 // Check visibility in ChatGPT using actual ChatGPT model
@@ -1225,17 +1238,19 @@ app.post("/api/check-visibility", async (req, res) => {
         ((chatgptHits + gemmaHits) / (total * 2)) * 100
       ),
       summary: {
+        totalQueries: total,
         chatgpt: {
           mentions: chatgptHits,
           percentage: Math.round((chatgptHits / total) * 100)
         },
-        gemma: {
+        gemini: {   // ⚠️ rename gemma → gemini
           mentions: gemmaHits,
           percentage: Math.round((gemmaHits / total) * 100)
         }
       },
       results
     });
+
 
   } catch (err) {
     console.error(err);
@@ -1491,10 +1506,28 @@ Now analyze this SPECIFIC website and return the JSON structure with insights ta
   let parsed;
   try {
     parsed = JSON.parse(clean);
-  } catch (e) {
-    console.error("❌ JSON parse failed:\n", clean);
-    throw new Error("Invalid JSON from AI");
+  } catch {
+    console.log("⚠️ AI JSON invalid. Returning fallback.");
+    return {
+      overallScore: 0,
+      businessClassification: "Unknown",
+      qualityCoverage: 0,
+      criticalPages: 0,
+      totalPages: 0,
+      recommendations: 0,
+      visibilityPredictions: [],
+      fanOutQueries: [],
+      actionPlan: [],
+      technicalFindings: {
+        hasStructuredData: false,
+        hasMetaDescriptions: false,
+        hasOpenGraph: false,
+        contentQuality: "poor",
+        crawlability: "poor"
+      }
+    };
   }
+
 
   return parsed;
 }
