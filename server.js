@@ -1,701 +1,4 @@
 
-// import express from "express";
-// import axios from "axios";
-// import * as cheerio from "cheerio";
-// import dotenv from "dotenv";
-// import cors from "cors";
-
-// dotenv.config();
-// const app = express();
-// app.use(express.json());
-
-
-
-
-
-// app.use(cors({
-//   origin: "*", // allow all during dev
-//   methods: ["GET", "POST"],
-// }));
-// app.use(express.json());
-
-
-// function extractJSON(text) {
-//   if (!text) return "";
-//   return text
-//     .replace(/```json/gi, "")
-//     .replace(/```/g, "")
-//     .trim();
-// }
-
-
-// async function fetchWebsiteData(domain) {
-//   const url = domain.startsWith("http") ? domain : `https://${domain}`;
-//   const { data: html } = await axios.get(url, { timeout: 10000 });
-
-//   const $ = cheerio.load(html);
-
-//   return {
-//     title: $("title").text(),
-//     metaDescription: $('meta[name="description"]').attr("content") || "",
-//     headings: $("h1, h2")
-//       .map((_, el) => $(el).text())
-//       .get()
-//       .slice(0, 10),
-//     bodyText: $("body").text().replace(/\s+/g, " ").slice(0, 4000)
-//   };
-// }
-
-// async function analyzeWithAI(websiteData) {
-//   const prompt = `
-// You are an AI domain and brand profiler.
-
-// STRICT RULES:
-// - Return ONLY raw JSON
-// - NO markdown
-// - NO backticks
-// - NO explanations
-
-// Return exactly this structure:
-// {
-//   "interpretation": "",
-//   "domainType": "",
-//   "brandType": "",
-//   "coreOffering": "",
-//   "associatedTopics": [],
-//   "brandSentiment": "",
-//   "competitors": [],
-//   "commonKeywords": [],
-//   "gaps": [],
-// }
-
-// Website Data:
-// ${JSON.stringify(websiteData, null, 2)}
-// `;
-
-//   const response = await axios.post(
-//     "https://openrouter.ai/api/v1/chat/completions",
-//     {
-//       model: "openai/gpt-4o-mini",
-//       messages: [{ role: "user", content: prompt }],
-//       temperature: 0.3
-//     },
-//     {
-//       headers: {
-//         Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-//         "Content-Type": "application/json"
-//       }
-//     }
-//   );
-
-//   const raw = response.data.choices[0].message.content;
-//   const clean = extractJSON(raw);
-
-//   try {
-//     return JSON.parse(clean);
-//   } catch (err) {
-//     console.error(" AI returned invalid JSON:\n", clean);
-//     throw new Error("AI JSON parsing failed");
-//   }
-// }
-
-
-// app.post("/api/analyze-domain", async (req, res) => {
-//   try {
-//     const { domain } = req.body;
-//     if (!domain) return res.status(400).json({ error: "Domain required" });
-
-//     const websiteData = await fetchWebsiteData(domain);
-//     const aiResult = await analyzeWithAI(websiteData);
-
-//     res.json(aiResult);
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ error: "Analysis failed" });
-//   }
-// });
-
-// app.listen(3000, () => {
-//   console.log("Server running on http://localhost:3000");
-// });
-
-
-
-// import express from "express";
-// import axios from "axios";
-// import * as cheerio from "cheerio";
-// import dotenv from "dotenv";
-// import cors from "cors";
-
-// dotenv.config();
-// const app = express();
-// app.use(express.json());
-
-// app.use(cors({
-//   origin: "*", // allow all during dev
-//   methods: ["GET", "POST"],
-// }));
-// app.use(express.json());
-
-// function extractJSON(text) {
-//   if (!text) return "";
-//   return text
-//     .replace(/```json/gi, "")
-//     .replace(/```/g, "")
-//     .trim();
-// }
-
-// async function fetchWebsiteData(domain) {
-//   const url = domain.startsWith("http") ? domain : `https://${domain}`;
-//   const { data: html } = await axios.get(url, { timeout: 10000 });
-
-//   const $ = cheerio.load(html);
-
-//   return {
-//     title: $("title").text(),
-//     metaDescription: $('meta[name="description"]').attr("content") || "",
-//     headings: $("h1, h2")
-//       .map((_, el) => $(el).text())
-//       .get()
-//       .slice(0, 10),
-//     bodyText: $("body").text().replace(/\s+/g, " ").slice(0, 4000),
-//     // Additional data for AI readiness
-//     scripts: $("script[src]")
-//       .map((_, el) => $(el).attr("src"))
-//       .get()
-//       .slice(0, 20),
-//     images: $("img[src], img[data-src]")
-//       .map((_, el) => $(el).attr("src") || $(el).attr("data-src"))
-//       .get()
-//       .slice(0, 20),
-//     structuredData: $('script[type="application/ld+json"]')
-//       .map((_, el) => $(el).html())
-//       .get()
-//   };
-// }
-
-// async function analyzeWithAI(websiteData) {
-//   const prompt = `
-// You are an AI domain and brand profiler.
-
-// STRICT RULES:
-// - Return ONLY raw JSON
-// - NO markdown
-// - NO backticks
-// - NO explanations
-
-// Return exactly this structure:
-// {
-//   "interpretation": "",
-//   "domainType": "",
-//   "brandType": "",
-//   "coreOffering": "",
-//   "associatedTopics": [],
-//   "brandSentiment": "",
-//   "competitors": [],
-//   "commonKeywords": [],
-//   "gaps": []
-// }
-
-// Website Data:
-// ${JSON.stringify(websiteData, null, 2)}
-// `;
-
-//   const response = await axios.post(
-//     "https://openrouter.ai/api/v1/chat/completions",
-//     {
-//       model: "openai/gpt-4o-mini",
-//       messages: [{ role: "user", content: prompt }],
-//       temperature: 0.3
-//     },
-//     {
-//       headers: {
-//         Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-//         "Content-Type": "application/json"
-//       }
-//     }
-//   );
-
-//   const raw = response.data.choices[0].message.content;
-//   const clean = extractJSON(raw);
-
-//   try {
-//     return JSON.parse(clean);
-//   } catch (err) {
-//     console.error("AI returned invalid JSON:\n", clean);
-//     throw new Error("AI JSON parsing failed");
-//   }
-// }
-
-// async function analyzeAIReadiness(websiteData) {
-//   const prompt = `
-// You are an AI readiness assessment expert analyzing website structure for LLM integration potential.
-
-// STRICT RULES:
-// - Return ONLY raw JSON
-// - NO markdown
-// - NO backticks
-// - NO explanations
-
-// Analyze the website for AI/LLM readiness and return exactly this structure:
-// {
-//   "overallScore": 75,
-//   "businessClassification": "General",
-//   "qualityCoverage": 67,
-//   "criticalPages": 3,
-//   "totalPages": 9,
-//   "recommendations": 6,
-//   "visibilityPredictions": [
-//     {
-//       "query": "best tools for creative collaboration",
-//       "path": "/help",
-//       "status": "Passed",
-//       "actionNeeded": "No Action Needed",
-//       "recommendation": "Keep article well-structured and ensure users"
-//     },
-//     {
-//       "query": "complete guide for content creators",
-//       "path": "/guides",
-//       "status": "Missing",
-//       "actionNeeded": "Create Page",
-//       "recommendation": "Create comprehensive guides that target this query and best practices"
-//     },
-//     {
-//       "query": "sign up form/landing page for blog",
-//       "path": "/signup",
-//       "status": "Missing",
-//       "actionNeeded": "Create Page",
-//       "recommendation": "Better page context metadata and user journey"
-//     },
-//     {
-//       "query": "newsletter page",
-//       "path": "/newsletter",
-//       "status": "Missing",
-//       "actionNeeded": "Create Page",
-//       "recommendation": "Newsletter keep users updated on new content"
-//     }
-//   ],
-//   "fanOutQueries": [
-//     {
-//       "query": "How can I use AI for customer support?",
-//       "path": "/help",
-//       "topic": "Informational",
-//       "intent": "Research Support",
-//       "status": "Missing",
-//       "relevance": 8
-//     },
-//     {
-//       "query": "Best practices for AI integration",
-//       "path": "/guides",
-//       "topic": "How-to",
-//       "intent": "Solution Focused",
-//       "status": "Missing",
-//       "relevance": 9
-//     },
-//     {
-//       "query": "AI tools comparison",
-//       "path": "/tools",
-//       "topic": "Informational",
-//       "intent": "Research Support",
-//       "status": "Missing",
-//       "relevance": 7
-//     }
-//   ],
-//   "actionPlan": [
-//     {
-//       "phase": "Quick Wins",
-//       "title": "Create Missing High Priority Pages",
-//       "items": [
-//         {
-//           "task": "Schema Enhancement - Add Structured Data",
-//           "priority": "High",
-//           "effort": "Low Med",
-//           "impact": 15
-//         },
-//         {
-//           "task": "Mobile Schema",
-//           "priority": "Med",
-//           "effort": "Med",
-//           "impact": 10
-//         }
-//       ]
-//     },
-//     {
-//       "phase": "Content Optimization",
-//       "title": "Enhance Existing Pages",
-//       "items": [
-//         {
-//           "task": "Content Optimization - Enhance Existing Pages",
-//           "priority": "Med",
-//           "effort": "Med",
-//           "impact": 20
-//         }
-//       ]
-//     }
-//   ],
-//   "technicalFindings": {
-//     "hasStructuredData": false,
-//     "hasMetaDescriptions": true,
-//     "hasOpenGraph": false,
-//     "contentQuality": "medium",
-//     "crawlability": "good"
-//   }
-// }
-
-// Analyze based on:
-// - Content structure and organization
-// - Meta tags and structured data presence
-// - Content quality and depth
-// - Common user query gaps
-// - SEO and discoverability factors
-
-// Website Data:
-// Title: ${websiteData.title}
-// Meta: ${websiteData.metaDescription}
-// Headings: ${websiteData.headings.join(", ")}
-// Has Scripts: ${websiteData.scripts.length > 0}
-// Has Images: ${websiteData.images.length > 0}
-// Structured Data: ${websiteData.structuredData.length > 0 ? "Yes" : "No"}
-// Content Sample: ${websiteData.bodyText.slice(0, 1000)}
-// `;
-
-//   const response = await axios.post(
-//     "https://openrouter.ai/api/v1/chat/completions",
-//     {
-//       model: "openai/gpt-4o-mini",
-//       messages: [{ role: "user", content: prompt }],
-//       temperature: 0.4
-//     },
-//     {
-//       headers: {
-//         Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-//         "Content-Type": "application/json"
-//       }
-//     }
-//   );
-
-//   const raw = response.data.choices[0].message.content;
-//   const clean = extractJSON(raw);
-
-//   try {
-//     return JSON.parse(clean);
-//   } catch (err) {
-//     console.error(" AI returned invalid JSON:\n", clean);
-//     throw new Error("AI JSON parsing failed");
-//   }
-// }
-
-// // Domain profiler endpoint
-// app.post("/api/analyze-domain", async (req, res) => {
-//   try {
-//     const { domain } = req.body;
-//     if (!domain) return res.status(400).json({ error: "Domain required" });
-
-//     const websiteData = await fetchWebsiteData(domain);
-//     const aiResult = await analyzeWithAI(websiteData);
-
-//     res.json(aiResult);
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ error: "Analysis failed" });
-//   }
-// });
-
-// // AI Readiness Analyzer endpoint
-// app.post("/api/analyze-readiness", async (req, res) => {
-//   try {
-//     const { domain } = req.body;
-//     if (!domain) return res.status(400).json({ error: "Domain required" });
-
-//     const websiteData = await fetchWebsiteData(domain);
-//     const readinessResult = await analyzeAIReadiness(websiteData);
-
-//     res.json(readinessResult);
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ error: "Analysis failed" });
-//   }
-// });
-
-// app.listen(3000, () => {
-//   console.log(" Server running on http://localhost:3000");
-// });
-
-
-
-// import express from "express";
-// import axios from "axios";
-// import * as cheerio from "cheerio";
-// import dotenv from "dotenv";
-// import cors from "cors";
-
-// dotenv.config();
-// const app = express();
-// app.use(express.json());
-
-// app.use(cors({
-//   origin: "*", // allow all during dev
-//   methods: ["GET", "POST"],
-// }));
-// app.use(express.json());
-
-// function extractJSON(text) {
-//   if (!text) return "";
-//   return text
-//     .replace(/```json/gi, "")
-//     .replace(/```/g, "")
-//     .trim();
-// }
-
-// async function fetchWebsiteData(domain) {
-//   const url = domain.startsWith("http") ? domain : `https://${domain}`;
-//   const { data: html } = await axios.get(url, { timeout: 10000 });
-
-//   const $ = cheerio.load(html);
-
-//   return {
-//     title: $("title").text(),
-//     metaDescription: $('meta[name="description"]').attr("content") || "",
-//     headings: $("h1, h2")
-//       .map((_, el) => $(el).text())
-//       .get()
-//       .slice(0, 10),
-//     bodyText: $("body").text().replace(/\s+/g, " ").slice(0, 4000),
-//     // Additional data for AI readiness
-//     scripts: $("script[src]")
-//       .map((_, el) => $(el).attr("src"))
-//       .get()
-//       .slice(0, 20),
-//     images: $("img[src], img[data-src]")
-//       .map((_, el) => $(el).attr("src") || $(el).attr("data-src"))
-//       .get()
-//       .slice(0, 20),
-//     structuredData: $('script[type="application/ld+json"]')
-//       .map((_, el) => $(el).html())
-//       .get()
-//   };
-// }
-
-// async function analyzeWithAI(websiteData) {
-//   const prompt = `
-// You are an AI domain and brand profiler.
-
-// STRICT RULES:
-// - Return ONLY raw JSON
-// - NO markdown
-// - NO backticks
-// - NO explanations
-
-// Return exactly this structure:
-// {
-//   "interpretation": "",
-//   "domainType": "",
-//   "brandType": "",
-//   "coreOffering": "",
-//   "associatedTopics": [],
-//   "brandSentiment": "",
-//   "competitors": [],
-//   "commonKeywords": [],
-//   "gaps": []
-// }
-
-// Website Data:
-// ${JSON.stringify(websiteData, null, 2)}
-// `;
-
-//   const response = await axios.post(
-//     "https://openrouter.ai/api/v1/chat/completions",
-//     {
-//       model: "openai/gpt-4o-mini",
-//       messages: [{ role: "user", content: prompt }],
-//       temperature: 0.3
-//     },
-//     {
-//       headers: {
-//         Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-//         "Content-Type": "application/json"
-//       }
-//     }
-//   );
-
-//   const raw = response.data.choices[0].message.content;
-//   const clean = extractJSON(raw);
-
-//   try {
-//     return JSON.parse(clean);
-//   } catch (err) {
-//     console.error("❌ AI returned invalid JSON:\n", clean);
-//     throw new Error("AI JSON parsing failed");
-//   }
-// }
-
-// async function analyzeAIReadiness(websiteData) {
-//   const prompt = `
-// You are an AI readiness assessment expert. Analyze this SPECIFIC website for LLM integration potential.
-
-// CRITICAL INSTRUCTIONS:
-// - Return ONLY raw JSON (no markdown, no backticks, no explanations)
-// - Analyze the ACTUAL website data provided below
-// - Generate REALISTIC scores and insights based on the content
-// - Create SPECIFIC, ACTIONABLE recommendations
-// - Identify REAL gaps and opportunities from the website content
-
-// Required JSON structure:
-// {
-//   "overallScore": <number 0-100>,
-//   "businessClassification": "<type based on content>",
-//   "qualityCoverage": <number 0-100>,
-//   "criticalPages": <number>,
-//   "totalPages": <estimated number>,
-//   "recommendations": <number of recommendations>,
-//   "visibilityPredictions": [
-//     {
-//       "query": "<specific predicted user query>",
-//       "path": "<relevant path>",
-//       "status": "Passed" or "Missing" or "Warning",
-//       "actionNeeded": "<action type>",
-//       "recommendation": "<specific recommendation>"
-//     }
-//   ],
-//   "fanOutQueries": [
-//     {
-//       "query": "<user intent query>",
-//       "path": "<suggested path>",
-//       "topic": "<topic category>",
-//       "intent": "<user intent>",
-//       "status": "Passed" or "Missing",
-//       "relevance": <1-10>
-//     }
-//   ],
-//   "actionPlan": [
-//     {
-//       "phase": "<phase name>",
-//       "title": "<phase description>",
-//       "items": [
-//         {
-//           "task": "<specific task>",
-//           "priority": "High" or "Med" or "Low",
-//           "effort": "<effort estimate>",
-//           "impact": <percentage number>
-//         }
-//       ]
-//     }
-//   ],
-//   "technicalFindings": {
-//     "hasStructuredData": <boolean>,
-//     "hasMetaDescriptions": <boolean>,
-//     "hasOpenGraph": <boolean>,
-//     "contentQuality": "excellent" or "good" or "medium" or "poor",
-//     "crawlability": "excellent" or "good" or "medium" or "poor"
-//   }
-// }
-
-// ANALYSIS GUIDELINES:
-// 1. overallScore: Calculate based on content quality, structure, metadata, and completeness (0-100)
-//    - 90-100: Excellent structure, rich metadata, comprehensive content
-//    - 70-89: Good foundation, some gaps in metadata or content
-//    - 50-69: Basic structure, missing key elements
-//    - 30-49: Poor structure, significant gaps
-//    - 0-29: Minimal AI readiness
-   
-// 2. visibilityPredictions: Generate 4-8 realistic queries users might search for this business
-//    - Mix of "Passed" (content exists), "Missing" (gaps), and "Warning" (needs improvement)
-//    - Queries should match the actual business/industry
-   
-// 3. fanOutQueries: Identify 3-6 related intent queries this site should rank for
-//    - Should reflect actual user needs for this industry
-//    - Relevance scores should vary (5-10)
-   
-// 4. actionPlan: Create 2-4 phases with specific, prioritized tasks
-//    - Phase 1: Quick Wins (high impact, low effort)
-//    - Phase 2: Content Optimization
-//    - Phase 3: Technical Enhancements (optional)
-//    - Phase 4: Advanced Features (optional)
-   
-// 5. Recommendations should be SPECIFIC to this website's industry and content gaps
-
-// 6. Business Classification should match the actual site (e.g., E-commerce, SaaS, Blog, Agency, etc.)
-
-// WEBSITE DATA TO ANALYZE:
-// =========================
-// Title: ${websiteData.title || "No title found"}
-// Meta Description: ${websiteData.metaDescription || "No meta description"}
-// Main Headings: ${websiteData.headings.length > 0 ? websiteData.headings.join(" | ") : "No headings found"}
-// Has JavaScript: ${websiteData.scripts.length > 0 ? "Yes (" + websiteData.scripts.length + " scripts)" : "No"}
-// Has Images: ${websiteData.images.length > 0 ? "Yes (" + websiteData.images.length + " images)" : "No"}
-// Structured Data Present: ${websiteData.structuredData.length > 0 ? "Yes" : "No"}
-
-// Content Sample (first 1500 chars):
-// ${websiteData.bodyText.slice(0, 1500)}
-
-// =========================
-
-// Now analyze this SPECIFIC website and return the JSON structure with insights tailored to this business.
-// `;
-
-//   const response = await axios.post(
-//     "https://openrouter.ai/api/v1/chat/completions",
-//     {
-//       model: "openai/gpt-4o-mini",
-//       messages: [{ role: "user", content: prompt }],
-//       temperature: 0.5  // Slightly higher for more creative/varied analysis
-//     },
-//     {
-//       headers: {
-//         Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-//         "Content-Type": "application/json"
-//       }
-//     }
-//   );
-
-//   const raw = response.data.choices[0].message.content;
-//   const clean = extractJSON(raw);
-
-//   try {
-//     return JSON.parse(clean);
-//   } catch (err) {
-//     console.error("❌ AI returned invalid JSON:\n", clean);
-//     throw new Error("AI JSON parsing failed");
-//   }
-// }
-
-// // Domain profiler endpoint
-// app.post("/api/analyze-domain", async (req, res) => {
-//   try {
-//     const { domain } = req.body;
-//     if (!domain) return res.status(400).json({ error: "Domain required" });
-
-//     const websiteData = await fetchWebsiteData(domain);
-//     const aiResult = await analyzeWithAI(websiteData);
-
-//     res.json(aiResult);
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ error: "Analysis failed" });
-//   }
-// });
-
-// // AI Readiness Analyzer endpoint
-// app.post("/api/analyze-readiness", async (req, res) => {
-//   try {
-//     const { domain } = req.body;
-//     if (!domain) return res.status(400).json({ error: "Domain required" });
-
-//     const websiteData = await fetchWebsiteData(domain);
-//     const readinessResult = await analyzeAIReadiness(websiteData);
-
-//     res.json(readinessResult);
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ error: "Analysis failed" });
-//   }
-// });
-
-// app.listen(3000, () => {
-//   console.log("🚀 Server running on http://localhost:3000");
-// });
-
-
 
 import express from "express";
 import axios from "axios";
@@ -794,501 +97,521 @@ async function fetchWebsiteData(domain) {
 }
 
 
-// Check visibility in ChatGPT
-// Check visibility in ChatGPT using actual ChatGPT model
-// Check visibility in ChatGPT using actual ChatGPT model
-// Check visibility in ChatGPT using actual ChatGPT model
-//\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\------------------------------------//////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 
-
-// async function checkChatGPTVisibility(brandName, query) {
-//   try {
-//     // First, get the actual ChatGPT response
-//     const chatgptResponse = await axios.post(
-//       "https://openrouter.ai/api/v1/chat/completions",
-//       {
-//         model: "openai/gpt-4o-mini",
-//         messages: [{ 
-//           role: "user", 
-//           content: query 
-//         }],
-//         temperature: 0.3
-//       },
-//       {
-//         headers: {
-//           Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-//           "Content-Type": "application/json"
-//         }
-//       }
-//     );
-
-//     const chatgptAnswer = chatgptResponse.data.choices[0].message.content;
-    
-//     // Now analyze if brand is mentioned in the response
-//     const analysisPrompt = `Analyze this ChatGPT response to determine if the brand "${brandName}" is mentioned or recommended.
-
-// User Query: "${query}"
-
-// ChatGPT Response:
-// ${chatgptAnswer}
-
-// Return ONLY raw JSON (no markdown, no backticks):
-// {
-//   "mentioned": true/false,
-//   "relevanceScore": 0-10,
-//   "context": "brief explanation of how the brand was/wasn't mentioned",
-//   "alternativesProvided": ["list of competitors/alternatives mentioned"],
-//   "reasoning": "detailed reasoning",
-//   "actualResponse": "brief excerpt showing brand mention or explaining absence"
-// }`;
-
-//     const analysisResponse = await axios.post(
-//       "https://openrouter.ai/api/v1/chat/completions",
-//       {
-//         model: "openai/gpt-4o-mini",
-//         messages: [{ 
-//           role: "user", 
-//           content: analysisPrompt 
-//         }],
-//         temperature: 0.2
-//       },
-//       {
-//         headers: {
-//           Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-//           "Content-Type": "application/json"
-//         }
-//       }
-//     );
-
-//     const raw = analysisResponse.data.choices[0].message.content;
-//     const clean = extractJSON(raw);
-//     return JSON.parse(clean);
-    
-//   } catch (err) {
-//     console.error("ChatGPT check error:", err.response?.data || err.message);
-//     return {
-//       mentioned: false,
-//       relevanceScore: 0,
-//       context: "Error checking visibility",
-//       alternativesProvided: [],
-//       reasoning: "API error occurred",
-//       actualResponse: ""
-//     };
-//   }
-// }
-
-// // Check visibility in Gemini using actual Gemini model
-// async function checkGeminiVisibility(brandName, query) {
-//   try {
-//     // First, get the actual Gemini response using meta-llama (free alternative)
-//     const geminiResponse = await axios.post(
-//       "https://openrouter.ai/api/v1/chat/completions",
-//       {
-//         model: "google/gemma-3n-e4b-it:free",
-//         messages: [{ 
-//           role: "user", 
-//           content: query 
-//         }],
-//         temperature: 0.3
-//       },
-//       {
-//         headers: {
-//           Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-//           "Content-Type": "application/json"
-//         }
-//       }
-//     );
-
-//     const geminiAnswer = geminiResponse.data.choices[0].message.content;
-    
-//     // Now analyze if brand is mentioned in the response
-//     const analysisPrompt = `Analyze this AI response to determine if the brand "${brandName}" is mentioned or recommended.
-
-// User Query: "${query}"
-
-// AI Response:
-// ${geminiAnswer}
-
-// Return ONLY raw JSON (no markdown, no backticks):
-// {
-//   "mentioned": true/false,
-//   "relevanceScore": 0-10,
-//   "context": "brief explanation of how the brand was/wasn't mentioned",
-//   "alternativesProvided": ["list of competitors/alternatives mentioned"],
-//   "reasoning": "detailed reasoning",
-//   "actualResponse": "brief excerpt showing brand mention or explaining absence"
-// }`;
-
-//     const analysisResponse = await axios.post(
-//       "https://openrouter.ai/api/v1/chat/completions",
-//       {
-//         model: "openai/gpt-4o-mini",
-//         messages: [{ 
-//           role: "user", 
-//           content: analysisPrompt 
-//         }],
-//         temperature: 0.2
-//       },
-//       {
-//         headers: {
-//           Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-//           "Content-Type": "application/json"
-//         }
-//       }
-//     );
-
-//     const raw = analysisResponse.data.choices[0].message.content;
-//     const clean = extractJSON(raw);
-//     return JSON.parse(clean);
-    
-//   } catch (err) {
-//     console.error("Gemini check error:", err.response?.data || err.message);
-//     return {
-//       mentioned: false,
-//       relevanceScore: 0,
-//       context: "Error checking visibility",
-//       alternativesProvided: [],
-//       reasoning: "API error occurred",
-//       actualResponse: ""
-//     };
-//   }
-// }
-
-// // Main visibility checker endpoint
-// app.post("/api/check-visibility", async (req, res) => {
-//   try {
-//     const { brandName, queries } = req.body;
-
-//     if (!brandName) {
-//       return res.status(400).json({ error: "Brand name required" });
-//     }
-
-//     if (!queries || !Array.isArray(queries) || queries.length === 0) {
-//       return res.status(400).json({ error: "At least one query required" });
-//     }
-
-//     if (queries.length > 5) {
-//       return res.status(400).json({ error: "Maximum 5 queries allowed" });
-//     }
-
-//     // Process all queries in parallel
-//     const results = await Promise.all(
-//       queries.map(async (query) => {
-//         const [chatgptResult, geminiResult] = await Promise.all([
-//           checkChatGPTVisibility(brandName, query),
-//           checkGeminiVisibility(brandName, query)
-//         ]);
-
-//         return {
-//           query,
-//           chatgpt: {
-//             found: chatgptResult.mentioned,
-//             relevanceScore: chatgptResult.relevanceScore,
-//             context: chatgptResult.context,
-//             alternatives: chatgptResult.alternativesProvided || [],
-//             reasoning: chatgptResult.reasoning,
-//             actualResponse: chatgptResult.actualResponse || ""
-//           },
-//           gemini: {
-//             found: geminiResult.mentioned,
-//             relevanceScore: geminiResult.relevanceScore,
-//             context: geminiResult.context,
-//             alternatives: geminiResult.alternativesProvided || [],
-//             reasoning: geminiResult.reasoning,
-//             actualResponse: geminiResult.actualResponse || ""
-//           }
-//         };
-//       })
-//     );
-
-//     // Calculate overall statistics
-//     const chatgptMentions = results.filter(r => r.chatgpt.found).length;
-//     const geminiMentions = results.filter(r => r.gemini.found).length;
-//     const totalQueries = queries.length;
-
-//     const overallScore = Math.round(
-//       ((chatgptMentions + geminiMentions) / (totalQueries * 2)) * 100
-//     );
-
-//     res.json({
-//       brandName,
-//       overallScore,
-//       summary: {
-//         totalQueries,
-//         chatgpt: {
-//           mentions: chatgptMentions,
-//           percentage: Math.round((chatgptMentions / totalQueries) * 100)
-//         },
-//         gemini: {
-//           mentions: geminiMentions,
-//           percentage: Math.round((geminiMentions / totalQueries) * 100)
-//         }
-//       },
-//       results
-//     });
-
-//   } catch (err) {
-//     console.error("Visibility check error:", err);
-//     res.status(500).json({ error: "Visibility check failed" });
-//   }
-// });
-
-// // Auto-generate queries endpoint
-// app.post("/api/generate-queries", async (req, res) => {
-//   try {
-//     const { brandName } = req.body;
-
-//     if (!brandName) {
-//       return res.status(400).json({ error: "Brand name required" });
-//     }
-
-//     const prompt = `Generate 5 relevant search queries that potential customers might use to find products/services related to the brand: "${brandName}"
-
-// These should be realistic queries someone would type into an AI assistant or search engine.
-
-// Return ONLY raw JSON (no markdown, no backticks):
-// {
-//   "queries": [
-//     "query 1",
-//     "query 2",
-//     "query 3",
-//     "query 4",
-//     "query 5"
-//   ]
-// }`;
-
-//     const response = await axios.post(
-//       "https://openrouter.ai/api/v1/chat/completions",
-//       {
-//         model: "openai/gpt-4o-mini",
-//         messages: [{ role: "user", content: prompt }],
-//         temperature: 0.7
-//       },
-//       {
-//         headers: {
-//           Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-//           "Content-Type": "application/json"
-//         }
-//       }
-//     );
-
-//     const raw = response.data.choices[0].message.content;
-//     const clean = extractJSON(raw);
-//     const result = JSON.parse(clean);
-
-//     res.json({ queries: result.queries || [] });
-
-//   } catch (err) {
-//     console.error("Query generation error:", err);
-//     res.status(500).json({ error: "Query generation failed" });
-//   }
-// });
-
-
-
-
-
-///////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
-
-
-
-///-----------------------------------------\\\\\
-
-
-
-const OPENROUTER_HEADERS = {
-  Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-  "Content-Type": "application/json"
-};
+// const OPENROUTER_HEADERS = {
+//   Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+//   "Content-Type": "application/json"
+// };
 
 /* ------------------------------
    GENERATE ANSWER (MODEL CALL)
 --------------------------------*/
 
-async function generateAnswer(model, query) {
-  const res = await axios.post(
-    "https://openrouter.ai/api/v1/chat/completions",
-    {
-      model,
-      messages: [{ role: "user", content: query }],
-      temperature: 0.3
-    },
-    { headers: OPENROUTER_HEADERS }
-  );
+/**
+ * Query GPT-4 via OpenRouter API
+ */
 
-  return res.data.choices[0].message.content;
-}
 
-/* ------------------------------
-   RELEVANCE EVALUATION (STRICT)
---------------------------------*/
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
-async function evaluateRelevance(answer, brand, query) {
-  const prompt = `
-You are a strict evaluator.
+const OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1';
+const GEMINI_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta';
 
-Rules:
-- Brand must be EXPLICITLY mentioned by name.
-- Do NOT infer or assume relevance.
-- Score relevance only if the brand name appears verbatim.
+// Model configurations
+const GPT_MODEL = 'openai/gpt-4-turbo';
 
-Return ONLY raw JSON:
-{
-  "relevanceScore": 0-10,
-  "context": "",
-  "reasoning": ""
-}
+const GEMINI_MODEL = 'gemini-2.5-flash-lite';  // ✅ Best free option
 
-User Query:
-"${query}"
 
-AI Response:
-"${answer}"
-`;
-
-  const res = await axios.post(
-    "https://openrouter.ai/api/v1/chat/completions",
-    {
-      model: "openai/gpt-4o-mini",
-      messages: [{ role: "user", content: prompt }],
-      temperature: 0
-    },
-    { headers: OPENROUTER_HEADERS }
-  );
-
-  const raw = res.data.choices[0].message.content;
-  return JSON.parse(extractJSON(raw));
-}
-
-/* ------------------------------
-   CHECK VISIBILITY (GENERIC)
---------------------------------*/
-
-async function checkVisibility({ model, brand, query }) {
-  const answer = await generateAnswer(model, query);
-  const mentioned = literalMention(answer, brand);
-
-  let evaluation = {
-    relevanceScore: 0,
-    context: "Brand not explicitly mentioned",
-    reasoning: "Literal string match failed"
-  };
-
-  if (mentioned) {
-    evaluation = await evaluateRelevance(answer, brand, query);
-  }
-
-  return {
-    found: mentioned,
-    relevanceScore: evaluation.relevanceScore,
-    context: evaluation.context,
-    reasoning: evaluation.reasoning,
-    actualResponse: mentioned
-      ? answer.substring(0, 300)
-      : ""
-  };
-}
-
-/* ------------------------------
-   MAIN API ENDPOINT
---------------------------------*/
-
-app.post("/api/check-visibility", async (req, res) => {
-  try {
-    const { brandName, queries } = req.body;
-
-    if (!brandName || !queries?.length)
-      return res.status(400).json({ error: "Invalid input" });
-
-    if (queries.length > 5)
-      return res.status(400).json({ error: "Max 5 queries allowed" });
-
-    const results = await Promise.all(
-      queries.map(async query => {
-        const [chatgpt, gemma] = await Promise.all([
-          checkVisibility({
-            model: "openai/gpt-4o-mini",
-            brand: brandName,
-            query
-          }),
-          checkVisibility({
-            model: "google/gemma-3n-e4b-it:free",
-            brand: brandName,
-            query
-          })
-        ]);
-
+// ========================================
+async function queryGPT(prompt) {
+    // Check if OpenRouter API key is configured
+    if (!OPENROUTER_API_KEY || OPENROUTER_API_KEY === 'your_openrouter_api_key_here') {
+        console.warn('OpenRouter API key not configured - skipping GPT query');
         return {
-          query,
-          chatgpt,
-          gemma
+            response: 'OpenRouter API key not configured. Add your API key to .env file to enable GPT-4 comparison.',
+            searchLinks: [],
+            error: 'API key not configured'
         };
-      })
-    );
+    }
 
-    const total = queries.length;
-    const chatgptHits = results.filter(r => r.chatgpt.found).length;
-    const gemmaHits = results.filter(r => r.gemma.found).length;
+    try {
+        const response = await axios.post(
+            `${OPENROUTER_BASE_URL}/chat/completions`,
+            {
+                model: GPT_MODEL,
+                messages: [
+                    {
+                        role: 'user',
+                        content: prompt
+                    }
+                ],
+                max_tokens: 80, // Reduced to avoid credit issues
+                temperature: 0.3
+            },
+            {
+                headers: {
+                    'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+                    'Content-Type': 'application/json',
+                    'HTTP-Referer': 'http://localhost:3000',
+                    'X-Title': 'Brand Visibility Checker'
+                }
+            }
+        );
 
-    res.json({
-      brandName,
-      overallScore: Math.round(
-        ((chatgptHits + gemmaHits) / (total * 2)) * 100
-      ),
-      summary: {
-        totalQueries: total,
-        chatgpt: {
-          mentions: chatgptHits,
-          percentage: Math.round((chatgptHits / total) * 100)
-        },
-        gemini: {   // ⚠️ rename gemma → gemini
-          mentions: gemmaHits,
-          percentage: Math.round((gemmaHits / total) * 100)
-        }
-      },
-      results
-    });
-
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Visibility check failed" });
-  }
-});
-
-/* ------------------------------
-   AUTO QUERY GENERATION
---------------------------------*/
-
-app.post("/api/generate-queries", async (req, res) => {
-  const { brandName } = req.body;
-  if (!brandName) return res.status(400).json({ error: "Brand required" });
-
-  const prompt = `
-Generate 5 realistic user queries where someone may or may not mention "${brandName}".
-
-Return ONLY raw JSON:
-{
-  "queries": []
+        const messageContent = response.data.choices[0].message.content;
+        
+        // Extract search links if present (OpenRouter may include them)
+        const searchLinks = extractSearchLinks(response.data);
+        
+        return {
+            response: messageContent,
+            searchLinks,
+            error: null
+        };
+    } catch (error) {
+        console.error('GPT Error:', error.response?.data || error.message);
+        return {
+            response: 'Error querying GPT-4. Please check your OpenRouter credits.',
+            searchLinks: [],
+            error: error.response?.data?.error?.message || error.message
+        };
+    }
 }
+
+/**
+ * Query Gemini Pro via Google API with Google Search grounding
+ */
+// async function queryGemini(prompt) {
+//     try {
+//         const response = await axios.post(
+//             `${GEMINI_BASE_URL}/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
+//             {
+//                 contents: [
+//                     {
+//                         parts: [
+//                             {
+//                                 text: prompt
+//                             }
+//                         ]
+//                     }
+//                 ],
+//                 generationConfig: {
+//                     temperature: 0.7,
+//                     maxOutputTokens: 500 // Reduced for efficiency
+//                 },
+//                 // Enable Google Search grounding (available in free tier)
+//                 tools: [
+//                     {
+//                         googleSearchRetrieval: {
+//                             dynamicRetrievalConfig: {
+//                                 mode: "MODE_DYNAMIC",
+//                                 dynamicThreshold: 0.3
+//                             }
+//                         }
+//                     }
+//                 ]
+//             },
+//             {
+//                 headers: {
+//                     'Content-Type': 'application/json'
+//                 }
+//             }
+//         );
+
+//         const content = response.data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        
+//         // Extract grounding metadata (Gemini's search references)
+//         const searchLinks = extractGeminiGrounding(response.data);
+        
+//         return {
+//             response: content,
+//             searchLinks,
+//             error: null
+//         };
+//     } catch (error) {
+//         console.error('Gemini Error:', error.response?.data || error.message);
+//         return {
+//             response: '',
+//             searchLinks: [],
+//             error: error.response?.data?.error?.message || error.message
+//         };
+//     }
+// }
+
+/**
+ * Extract search links from OpenRouter response
+ */
+
+
+async function queryGemini(prompt) {
+    try {
+        const response = await axios.post(
+            `${GEMINI_BASE_URL}/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
+            {
+                contents: [
+                    {
+                        parts: [
+                            {
+                                text: prompt
+                            }
+                        ]
+                    }
+                ],
+                generationConfig: {
+                    temperature: 0.3,
+                    maxOutputTokens: 80
+                }
+                // ✅ Removed tools section completely
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+
+        const content = response.data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        
+        return {
+            response: content,
+            searchLinks: [], // No search links without grounding
+            error: null
+        };
+    } catch (error) {
+        console.error('Gemini Error:', error.response?.data || error.message);
+        return {
+            response: '',
+            searchLinks: [],
+            error: error.response?.data?.error?.message || error.message
+        };
+    }
+}
+
+
+function extractSearchLinks(data) {
+    const links = [];
+    
+    // Check if there's search metadata in the response
+    if (data.metadata && data.metadata.sources) {
+        data.metadata.sources.forEach(source => {
+            links.push({
+                url: source.url,
+                title: source.title || source.url
+            });
+        });
+    }
+    
+    return links;
+}
+
+/**
+ * Extract grounding metadata from Gemini response
+ */
+function extractGeminiGrounding(data) {
+    const links = [];
+    
+    try {
+        // Check for grounding metadata with search chunks
+        if (data.candidates?.[0]?.groundingMetadata?.groundingChunks) {
+            data.candidates[0].groundingMetadata.groundingChunks.forEach(chunk => {
+                if (chunk.web && chunk.web.uri) {
+                    links.push({
+                        url: chunk.web.uri,
+                        title: chunk.web.title || chunk.web.uri
+                    });
+                }
+            });
+        }
+        
+        // Also check for grounding supports (alternative structure)
+        if (data.candidates?.[0]?.groundingMetadata?.groundingSupports) {
+            data.candidates[0].groundingMetadata.groundingSupports.forEach(support => {
+                if (support.segment && support.groundingChunkIndices) {
+                    // These reference the chunks above
+                }
+            });
+        }
+        
+        // Check for search entry point
+        if (data.candidates?.[0]?.groundingMetadata?.searchEntryPoint) {
+            const searchData = data.candidates[0].groundingMetadata.searchEntryPoint;
+            if (searchData.renderedContent) {
+                // This contains the search query used
+                console.log('Gemini search query:', searchData.renderedContent);
+            }
+        }
+        
+        // Check for web search queries (newer format)
+        if (data.candidates?.[0]?.groundingMetadata?.webSearchQueries) {
+            console.log('Gemini web search queries:', data.candidates[0].groundingMetadata.webSearchQueries);
+        }
+    } catch (error) {
+        console.error('Error extracting Gemini grounding:', error);
+    }
+    
+    return links;
+}
+
+/**
+ * Check if brand is mentioned in response
+ */
+function checkBrandMention(response, brandName) {
+    const lowerResponse = response.toLowerCase();
+    const lowerBrand = brandName.toLowerCase();
+    
+    // Check for exact brand mention
+    const mentioned = lowerResponse.includes(lowerBrand);
+    
+    // Extract sentences containing the brand
+    const references = [];
+    const sentences = response.match(/[^.!?]+[.!?]+/g) || [];
+    
+    sentences.forEach((sentence, idx) => {
+        if (sentence.toLowerCase().includes(lowerBrand)) {
+            references.push({
+                text: sentence.trim(),
+                index: idx
+            });
+        }
+    });
+    
+    return { mentioned, references };
+}
+
+/**
+ * Generate queries using AI based on brand information
+ * Uses Gemini (free) instead of GPT for query generation
+ */
+
+
+
+function safeJsonArrayParse(text) {
+    try {
+        if (!text) throw new Error("Empty AI response");
+
+        // Remove markdown code blocks if AI added them
+        text = text.replace(/```json|```/gi, "").trim();
+
+        // Extract first JSON array
+        const match = text.match(/\[[\s\S]*?\]/);
+
+        if (!match) throw new Error("No JSON array found");
+
+        // Remove trailing commas (invalid JSON fix)
+        const cleaned = match[0].replace(/,\s*]/g, "]");
+
+        return JSON.parse(cleaned);
+    } catch (err) {
+        console.error("❌ RAW AI RESPONSE:\n", text);
+        throw new Error("Failed to parse queries from response");
+    }
+}
+
+// async function generateBrandQueries(brandName, websiteUrl = '', businessType = '') {
+//     const prompt = `Generate 5 diverse search queries that potential customers might ask AI assistants when looking for products or services similar to "${brandName}".
+
+// ${websiteUrl ? `Website: ${websiteUrl}` : ''}
+// ${businessType ? `Business Type: ${businessType}` : ''}
+
+// Requirements:
+// - Each query should be natural and conversational
+// - Queries should cover different angles: comparisons, alternatives, best practices, recommendations, how-to questions
+// - Do not mention the brand name "${brandName}" directly in the queries
+// - Focus on the problem space or category, not the specific brand
+// - Return ONLY a JSON array of strings, nothing else
+
+// Example format:
+// ["query 1", "query 2", "query 3", ...]`;
+
+//     try {
+//         // Use Gemini to generate queries (it's free!)
+//         const result = await queryGemini(prompt);
+        
+//         if (result.error) {
+//             throw new Error(result.error);
+//         }
+        
+//         // Parse the JSON response
+//         const jsonMatch = result.response.match(/\[[\s\S]*\]/);
+//         if (!jsonMatch) {
+//             throw new Error('Failed to parse queries from response');
+//         }
+        
+//         const queries = JSON.parse(jsonMatch[0]);
+        
+//         // Ensure we have at least some queries and not more than 10
+//         return queries.slice(0, 5);
+        
+//     } catch (error) {
+//         console.error('Error generating queries:', error);
+//         throw error;
+//     }
+// }
+
+// ========================================
+// API Routes
+// ========================================
+
+async function generateBrandQueries(brandName, websiteUrl = '', businessType = '') {
+    const prompt = `Generate 5 diverse search queries that potential customers might ask AI assistants when looking for products or services similar to "${brandName}".
+
+${websiteUrl ? `Website: ${websiteUrl}` : ''}
+${businessType ? `Business Type: ${businessType}` : ''}
+
+Requirements:
+- Each query should be natural and conversational
+- Do not mention the brand name "${brandName}"
+- Return ONLY valid JSON array of strings
+- No markdown
+- No explanations
 `;
 
-  const response = await axios.post(
-    "https://openrouter.ai/api/v1/chat/completions",
-    {
-      model: "openai/gpt-4o-mini",
-      messages: [{ role: "user", content: prompt }],
-      temperature: 0.7
-    },
-    { headers: OPENROUTER_HEADERS }
-  );
+    try {
+        const result = await queryGemini(prompt);
 
-  const raw = response.data.choices[0].message.content;
-  res.json(JSON.parse(extractJSON(raw)));
+        if (result.error) throw new Error(result.error);
+
+        // 🔥 NEW SAFE PARSER HERE
+        const queries = safeJsonArrayParse(result.response);
+
+        return queries.slice(0, 5);
+
+    } catch (error) {
+        console.error('Error generating queries:', error.message);
+
+        // 🛡 Fallback queries (so server never crashes)
+        return [
+            "best tools in this category",
+            "top services for small business",
+            "affordable solutions for startups",
+            "how to choose the right provider",
+            "alternatives to popular platforms"
+        ];
+    }
+}
+
+/**
+ * Health check endpoint
+ */
+app.get('/api/health', (req, res) => {
+    res.json({ 
+        status: 'ok',
+        timestamp: new Date().toISOString()
+    });
 });
 
+/**
+ * Generate brand queries endpoint
+ */
+app.post('/api/generate-queries', async (req, res) => {
+    try {
+        const { brandName, websiteUrl, businessType } = req.body;
+        
+        if (!brandName) {
+            return res.status(400).json({ error: 'Brand name is required' });
+        }
+        
+        const queries = await generateBrandQueries(brandName, websiteUrl, businessType);
+        
+        res.json({ queries });
+        
+    } catch (error) {
+        console.error('Generate queries error:', error);
+        res.status(500).json({ 
+            error: error.message || 'Failed to generate queries'
+        });
+    }
+});
+
+/**
+ * Check brand visibility endpoint
+ */
+app.post('/api/check-visibility', async (req, res) => {
+    try {
+        const { brandName, queries } = req.body;
+        
+        // Validation
+        if (!brandName) {
+            return res.status(400).json({ error: 'Brand name is required' });
+        }
+        
+        if (!queries || !Array.isArray(queries) || queries.length === 0) {
+            return res.status(400).json({ error: 'At least one query is required' });
+        }
+        
+        if (queries.length > 5) {
+            return res.status(400).json({ error: 'Maximum 10 queries allowed' });
+        }
+        
+        // Process each query
+        const results = await Promise.all(
+            queries.map(async (query) => {
+                // Query both models
+                const [gptResult, geminiResult] = await Promise.all([
+                    queryGPT(query),
+                    queryGemini(query)
+                ]);
+                
+                // Check brand mentions
+                const gptAnalysis = checkBrandMention(gptResult.response, brandName);
+                const geminiAnalysis = checkBrandMention(geminiResult.response, brandName);
+                
+                return {
+                    query,
+                    gpt: {
+                        response: gptResult.response,
+                        mentioned: gptAnalysis.mentioned,
+                        references: gptAnalysis.references,
+                        searchLinks: gptResult.searchLinks,
+                        error: gptResult.error
+                    },
+                    gemini: {
+                        response: geminiResult.response,
+                        mentioned: geminiAnalysis.mentioned,
+                        references: geminiAnalysis.references,
+                        searchLinks: geminiResult.searchLinks,
+                        error: geminiResult.error
+                    }
+                };
+            })
+        );
+        
+        // Calculate summary statistics
+        const totalQueries = results.length;
+        const gptMentions = results.filter(r => r.gpt.mentioned).length;
+        const geminiMentions = results.filter(r => r.gemini.mentioned).length;
+        
+        const summary = {
+            gpt: {
+                visibilityScore: (gptMentions / totalQueries) * 100,
+                mentions: gptMentions,
+                total: totalQueries
+            },
+            gemini: {
+                visibilityScore: (geminiMentions / totalQueries) * 100,
+                mentions: geminiMentions,
+                total: totalQueries
+            }
+        };
+        
+        res.json({
+            brandName,
+            summary,
+            results
+        });
+        
+    } catch (error) {
+        console.error('Check visibility error:', error);
+        res.status(500).json({ 
+            error: error.message || 'Failed to check visibility'
+        });
+    }
+});
+
+// ========================================
 /* ------------------------------
    SERVER
 --------------------------------*/
@@ -1483,7 +806,7 @@ Now analyze this SPECIFIC website and return the JSON structure with insights ta
     {
       model: "openai/gpt-4o-mini",
       messages: [{ role: "user", content: prompt }],
-      temperature: 0.5  // Slightly higher for more creative/varied analysis
+      temperature: 0.3  // Slightly higher for more creative/varied analysis
     },
     {
       
